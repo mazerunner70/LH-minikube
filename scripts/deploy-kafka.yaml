@@ -1,0 +1,46 @@
+# https://kubernetes.io/docs/tasks/run-application/run-single-instance-stateful-application/
+
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: kafka
+spec:
+  ports:
+  - port: 9092
+    name: external
+  - port: 29092
+    name: internal
+  selector:
+    app: kafka
+
+---
+apiVersion: apps/v1 # for versions before 1.9.0 use apps/v1beta2
+kind: Deployment
+metadata:
+  name: kafka
+spec:
+  selector:
+    matchLabels:
+      app: kafka
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: kafka
+    spec:
+      hostname: kafka0
+      containers:
+      - image: lh-helm/kafka-service:0.10
+        name: kafka
+        ports:
+        - containerPort: 9092
+          name: kafka
+        volumeMounts:
+        - name: kafka-persistent-storage
+          mountPath: /var/lib/lh-kafka
+      volumes:
+      - name: kafka-persistent-storage
+        persistentVolumeClaim:
+          claimName: lh-kafka-pv-claim
