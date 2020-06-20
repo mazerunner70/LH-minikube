@@ -1,0 +1,20 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: lh-producer
+spec:
+  template:
+    spec:
+      containers:
+      - name: lh-producer
+        image: lh-helm/lh-producer:0.1
+        env:
+        - name: HOST_NAME
+          value: kafka0
+        - name: PORT_NUM
+          value: "29092"
+      restartPolicy: Never
+  backoffLimit: 4
+
+
+
