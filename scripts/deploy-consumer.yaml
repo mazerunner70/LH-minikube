@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: lh-consumer
+spec:
+  selector:
+    matchLabels:
+      app: lh-consumer
+  strategy:
+    type: Recreate    
+  template:
+    metadata:
+      labels:
+        app: lh-consumer
+    spec:
+      containers:
+      - name: lh-consumer
+        image: lh-helm/lh-consumer:0.1
+        env:
+        - name: HOST_NAME
+          value: kafka0
+        - name: PORT_NUM
+          value: "29092"
+      restartPolicy: Always
+
+
+
