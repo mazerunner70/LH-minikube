@@ -8,6 +8,6 @@ echo `pwd`
 
 # build kafka
 cd LH-kafka-zookeeper
-./scripts/build.bash
+./zookeeper/scripts/build.bash
 
 

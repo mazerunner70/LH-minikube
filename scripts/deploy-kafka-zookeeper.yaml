@@ -1,0 +1,47 @@
+# https://kubernetes.io/docs/tasks/run-application/run-single-instance-stateful-application/
+
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: zoo1
+  labels:
+    app: zookeeper-1
+spec:
+  ports:
+  - port: 2181
+    name: client
+  - port: 2888
+    name: follower
+  - port: 3888
+    name: leader
+  selector:
+    app: kafka-zookeeper-1
+
+
+---
+apiVersion: apps/v1 # for versions before 1.9.0 use apps/v1beta2
+kind: Deployment
+metadata:
+  name: zookeeper-deployment-1
+spec:
+  selector:
+    matchLabels:
+        app: zookeeper-1
+  template:
+    metadata:
+      labels:
+        app: zookeeper-1
+    spec:
+        #      hostname: kafka0
+      containers:
+      - image: lh-helm/kafka-zookeeper:0.10
+        name: zoo1
+        ports:
+        - containerPort: 2181
+          name: client
+        env: # https://hub.docker.com/r/digitalwonderland/zookeeper
+        - name: ZOOKEEPER_ID
+          value: "1"
+        - name: ZOOKEEPER_SERVER_1
+          value: zoo1
